@@ -30,6 +30,7 @@ public class Controller : MonoBehaviour {
         if (player == "Player1") {
             player1Score++;
             Debug.Log("Player 1 scores! Current score: " + player1Score);
+            SubmitScore(player);
         }
         else {
             player2Score++;
@@ -46,5 +47,25 @@ public class Controller : MonoBehaviour {
         // -------------
         player1.Reset();
         player2.Reset();
+    }
+
+    private void SubmitScore(string player)
+    {
+        new GameSparks.Api.Requests.LogEventRequest()
+        .SetEventKey("PLAYER_SCORED")
+        .SetEventAttribute("SCORE", 1)
+        .SetEventAttribute("PLAYER", player)
+        .Send((response) => { 
+            if(!response.HasErrors)
+            {
+                Debug.Log("Score submitted for " + player);
+            }
+            else
+            {
+                Debug.LogError("Score could not be submitted!");
+                Debug.Log(response.JSONString);
+            }
+
+        });
     }
 }
